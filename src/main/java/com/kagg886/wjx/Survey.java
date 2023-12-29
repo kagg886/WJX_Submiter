@@ -52,6 +52,16 @@ public class Survey {
     }
 
     public String submit() {
+        StringBuilder dataSpawner = new StringBuilder();
+        for (int i = 0; i < questions.size(); i++) {
+            dataSpawner.append(i + 1).append("$");
+            dataSpawner.append(questions.get(i).spawnFormatAnswer());
+            dataSpawner.append("}");
+        }
+        return submit(dataSpawner.substring(0, dataSpawner.length() - 1));
+    }
+
+    public String submit(String encodedAnswer) {
         String submitType = "1";
         String kTimes = String.valueOf(new Random().nextInt(20) + 4);
         String hlv = "1";
@@ -72,15 +82,7 @@ public class Survey {
                 "&jqnonce=" + URLEncoder.encode(jqnonce, StandardCharsets.UTF_8) +
                 "&jqsign=" + URLEncoder.encode(jqsign, StandardCharsets.UTF_8)
         );
-        StringBuilder dataSpawner = new StringBuilder();
-        for (int i = 0; i < questions.size(); i++) {
-            dataSpawner.append(i + 1).append("$");
-            dataSpawner.append(questions.get(i).spawnFormatAnswer());
-            dataSpawner.append("}");
-        }
-
-        connection.data("submitdata", dataSpawner.substring(0, dataSpawner.length() - 1));
-
+        connection.data("submitdata",encodedAnswer);
         connection.header("accept", "text/plain, */*; q=0.01");
         connection.header("accept-language", "zh-CN,zh;q=0.9");
         connection.header("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
